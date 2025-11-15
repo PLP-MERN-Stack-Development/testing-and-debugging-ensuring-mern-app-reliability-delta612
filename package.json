@@ -1,0 +1,90 @@
+{
+  "name": "mern-testing-debugging",
+  "version": "1.0.0",
+  "description": "MERN Stack Application with Comprehensive Testing",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "npm install && npm install --prefix client && npm install --prefix server",
+    "test": "jest",
+    "test:unit": "jest --testPathPattern=unit",
+    "test:integration": "jest --testPathPattern=integration",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "cypress open",
+    "test:e2e:headless": "cypress run",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e:headless",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "MERN",
+    "testing",
+    "debugging"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.22.0",
+    "@babel/preset-env": "^7.22.0",
+    "@babel/preset-react": "^7.22.0",
+    "@testing-library/jest-dom": "^5.16.0",
+    "@testing-library/react": "^13.0.0",
+    "@testing-library/user-event": "^14.4.0",
+    "babel-jest": "^29.0.0",
+    "cypress": "^12.0.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.0.0",
+    "jest-environment-jsdom": "^29.0.0",
+    "mongodb-memory-server": "^8.0.0",
+    "supertest": "^6.3.0"
+  },
+  "jest": {
+    "projects": [
+      {
+        "displayName": "server",
+        "testEnvironment": "node",
+        "testMatch": ["<rootDir>/server/tests/**/*.test.js"],
+        "moduleFileExtensions": ["js", "json", "node"],
+        "setupFilesAfterEnv": ["<rootDir>/server/tests/setup.js"],
+        "coverageDirectory": "<rootDir>/coverage/server",
+        "collectCoverageFrom": [
+          "server/src/**/*.js",
+          "!server/src/config/**",
+          "!**/node_modules/**"
+        ]
+      },
+      {
+        "displayName": "client",
+        "testEnvironment": "jsdom",
+        "testMatch": ["<rootDir>/client/src/**/*.test.{js,jsx}"],
+        "moduleFileExtensions": ["js", "jsx", "json"],
+        "moduleNameMapper": {
+          "\\.(css|less|scss|sass)$": "identity-obj-proxy",
+          "\\.(jpg|jpeg|png|gif|webp|svg)$": "<rootDir>/client/src/tests/__mocks__/fileMock.js"
+        },
+        "setupFilesAfterEnv": ["<rootDir>/client/src/tests/setup.js"],
+        "transform": {
+          "^.+\\.(js|jsx)$": "babel-jest"
+        },
+        "coverageDirectory": "<rootDir>/coverage/client",
+        "collectCoverageFrom": [
+          "client/src/**/*.{js,jsx}",
+          "!client/src/index.js",
+          "!**/node_modules/**"
+        ]
+      }
+    ],
+    "verbose": true,
+    "collectCoverage": true,
+    "coverageReporters": ["text", "lcov", "clover", "html"],
+    "coverageThreshold": {
+      "global": {
+        "statements": 70,
+        "branches": 60,
+        "functions": 70,
+        "lines": 70
+      }
+    },
+    "testTimeout": 10000
+  }
+}

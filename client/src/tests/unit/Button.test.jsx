@@ -1,9 +1,9 @@
-// Button.test.jsx - Unit test for Button component
-
+// Button.test.jsx - Unit test for Button component (expanded)
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import Button from '../../components/Button';
+import { Button, Input, Card } from '../../components/Button';
 
 describe('Button Component', () => {
   // Test rendering
@@ -91,5 +91,92 @@ describe('Button Component', () => {
     expect(button).toHaveClass('custom-class');
     // Should also have the default classes
     expect(button).toHaveClass('btn-primary');
+  });
+
+  // Test ref forwarding
+  it('forwards ref correctly', () => {
+    const ref = React.createRef();
+    render(<Button ref={ref}>Ref Test</Button>);
+    
+    expect(ref.current).toBeInTheDocument();
+    expect(ref.current.tagName).toBe('BUTTON');
+  });
+});
+
+describe('Input Component', () => {
+  it('renders with label and input', () => {
+    render(<Input label="Email" name="email" type="email" />);
+    
+    expect(screen.getByLabelText('Email')).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: /email/i })).toBeInTheDocument();
+  });
+
+  it('displays error message when error prop is provided', () => {
+    render(<Input error="Email is required" />);
+    
+    expect(screen.getByText('Email is required')).toBeInTheDocument();
+    const input = screen.getByRole('textbox');
+    expect(input).toHaveAttribute('aria-describedby', 'error-message');
+  });
+
+  it('displays helper text when provided', () => {
+    render(<Input helperText="Enter a valid email" />);
+    
+    expect(screen.getByText('Enter a valid email')).toBeInTheDocument();
+  });
+
+  it('applies error class when error exists', () => {
+    const { container } = render(<Input error="Error message" />);
+    
+    const input = container.querySelector('input');
+    expect(input).toHaveClass('input-error');
+  });
+
+  it('forwards ref correctly', () => {
+    const ref = React.createRef();
+    render(<Input ref={ref} />);
+    
+    expect(ref.current).toBeInTheDocument();
+    expect(ref.current.tagName).toBe('INPUT');
+  });
+
+  it('supports different input types', () => {
+    const { rerender } = render(<Input type="email" />);
+    let input = screen.getByRole('textbox');
+    expect(input).toHaveAttribute('type', 'email');
+    
+    rerender(<Input type="password" />);
+    input = screen.getByDisplayValue('');
+    expect(input).toHaveAttribute('type', 'password');
+  });
+});
+
+describe('Card Component', () => {
+  it('renders with children', () => {
+    render(<Card>Card content</Card>);
+    
+    expect(screen.getByText('Card content')).toBeInTheDocument();
+  });
+
+  it('renders with title', () => {
+    render(<Card title="Card Title">Content</Card>);
+    
+    expect(screen.getByText('Card Title')).toBeInTheDocument();
+  });
+
+  it('applies custom className', () => {
+    const { container } = render(
+      <Card className="custom-card">Content</Card>
+    );
+    
+    expect(container.firstChild).toHaveClass('card', 'custom-card');
+  });
+
+  it('passes additional props', () => {
+    const { container } = render(
+      <Card data-testid="test-card">Content</Card>
+    );
+    
+    expect(container.querySelector('[data-testid="test-card"]')).toBeInTheDocument();
   });
 }); 
